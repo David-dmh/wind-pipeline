@@ -42,6 +42,8 @@ def clean_data(df: DataFrame) -> DataFrame:
 
     # Median is preferred over mean as it is robust to the extreme sensor error values 
     # such as negative readings that are removed later
+    # Note: if all values for a turbine are NULL, median will be NULL
+    # These rows will not be imputed and will later be filtered out
     median_df = df.groupBy("turbine_id").agg(
         F.percentile_approx(
             "power_output"

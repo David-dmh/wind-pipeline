@@ -20,11 +20,12 @@ def run_pipeline(spark: SparkSession) -> None:
     # Clean
     df_clean = clean_data(df)
 
-    # prevent recomputation when passed to stats and anomalies tasks
-    df_clean.cache()  
+    # Prevent recomputation when passed to stats and anomalies tasks 
+    # materialise cache with count here before passing into to stats, anomalies and writes
+    df_clean.cache() 
     count_df_clean = df_clean.count()
 
-    logger.info("After cleaning: %d rows", count_df_clean.count())
+    logger.info("After cleaning: %d rows", count_df_clean)
 
     # Stats
     stats = compute_stats(df_clean)

@@ -50,10 +50,10 @@ wind-pipeline/
 
 ## Software versions
 
-Also see requirements.txt for libraries. 
-
 - Python 3.13.9
 - Java 17
+
+Also see requirements.txt for libraries. 
 
 ---
 

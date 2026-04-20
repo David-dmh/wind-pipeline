@@ -16,6 +16,8 @@ def detect_anomalies(df: DataFrame) -> DataFrame:
     df = df.withColumn("date", F.to_date("timestamp"))
 
     # Compute per-turbine daily mean and std - used to define the anomaly threshold
+    # Note: if only one reading exists for a turbine/day, stddev = NULL
+    # No anomaly would be flagged (expected)
     daily_stats = df.groupBy("turbine_id", "date").agg(
         F.avg("power_output").alias("avg_power")
         ,F.stddev("power_output").alias("std_power")

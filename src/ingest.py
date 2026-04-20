@@ -24,6 +24,7 @@ def ingest_data(spark: SparkSession, path: str = "data/") -> DataFrame:
     df = (
         spark.read
         .option("header", True)
+        .option("mode", "PERMISSIVE")  # explicit permissive mode (default) - handle missing/extra columns or rows not adhering to type
         .schema(schema)
         .csv(path)
     )
