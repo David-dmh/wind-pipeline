@@ -19,7 +19,12 @@ def run_pipeline(spark: SparkSession) -> None:
 
     # Clean
     df_clean = clean_data(df)
-    logger.info("After cleaning: %d rows", df_clean.count())
+
+    # prevent recomputation when passed to stats and anomalies tasks
+    df_clean.cache()  
+    count_df_clean = df_clean.count()
+
+    logger.info("After cleaning: %d rows", count_df_clean.count())
 
     # Stats
     stats = compute_stats(df_clean)

@@ -11,10 +11,10 @@ def write_outputs(
     ,base_path: str = "output/"
 ) -> None:
     logger.info("Writing cleaned data to %scleaned", base_path)
-    df_clean.write.mode("overwrite").parquet(f"{base_path}/cleaned")
+    df_clean.write.mode("overwrite").parquet(f"{base_path}cleaned")
 
     logger.info("Writing summary statistics to %sstats", base_path)
-    stats.write.mode("overwrite").parquet(f"{base_path}/stats")
+    stats.write.mode("overwrite").parquet(f"{base_path}stats")
 
     logger.info("Writing anomalies to %sanomalies", base_path)
-    anomalies.write.mode("overwrite").parquet(f"{base_path}/anomalies")
+    anomalies.write.mode("overwrite").parquet(f"{base_path}anomalies")
