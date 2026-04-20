@@ -67,7 +67,7 @@ def clean_data(df: DataFrame) -> DataFrame:
 
     # 4.2 - Impute missing wind_speed with per-turbine median
     null_count = df.filter(F.col("wind_speed").isNull()).count()
-    logger.info("Imputing %d null wind_speed values with per-turbine median", null_count)
+    logger.info("Imputing %d NULL wind_speed values with per-turbine median", null_count)
 
     wind_median_df = df.groupBy("turbine_id").agg(
             F.percentile_approx(

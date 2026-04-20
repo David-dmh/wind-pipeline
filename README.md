@@ -166,10 +166,10 @@ For scalability, in Production a Databricks workspace can be used. It can serve 
 - **Wind direction validity**: Values outside the valid range of 0-360 degrees are set to NULL during cleaning, since standard statistical methods would be misleading in this case: e.g. a mean of 1 degree and 359 degrees is 180 degrees which is in the opposite direction to 1 and 359 degrees. Wind direction is therefore excluded from imputation, statistics, and anomaly detection.
 - **CSV structure**: Each CSV always contains the same group of turbines. The pipeline reads all files in `data/` and processes them together.
 
-## Test Data
+## Test Data Edits
 
 `data_group_1.csv` has been modified from the original to include known edge
-cases that exercise each cleaning and detection step:
+cases that test each cleaning and detection step:
 
 | Row | Modification | Expected behaviour |
 |-----|--------------|--------------------|
@@ -178,6 +178,7 @@ cases that exercise each cleaning and detection step:
 | 19  | Negative power output | Dropped due to it being a sensor error |
 | 25  | Power output above 20 MW | Dropped due to it being a sensor error |
 | 39  | Unusually low power output for that turbine on that day | Flagged as anomaly |
+| 47  | Unusually high power output for that turbine on that day | Flagged as anomaly |
 
 `data_group_2.csv` and `data_group_3.csv` are unmodified from the original
 data supplied.
