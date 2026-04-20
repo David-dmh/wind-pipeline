@@ -20,7 +20,7 @@ def clean_data(df: DataFrame) -> DataFrame:
     df = df.dropDuplicates(["turbine_id", "timestamp"])
     logger.info("Dropped %d duplicate rows", before - df.count())
 
-    # 2. NULL wind_direction values outside valid compass range 0-360
+    # 2 - NULL wind_direction values outside valid compass range 0-360
     df = df.withColumn(
         "wind_direction"
         ,F.when(
@@ -83,8 +83,8 @@ def clean_data(df: DataFrame) -> DataFrame:
     )
     
     df = df.withColumn(
-        "wind_speed",
-        F.when(
+        "wind_speed"
+        ,F.when(
             F.col("wind_speed").isNull()
             ,F.col("median_wind_speed")
         )

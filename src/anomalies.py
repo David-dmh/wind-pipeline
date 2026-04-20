@@ -36,6 +36,7 @@ def detect_anomalies(df: DataFrame) -> DataFrame:
         )
     )
 
-    anomalies = df.filter(F.col("is_anomaly") == True)
+    # Return rows with anomalies
+    anomalies = df.filter(F.col("is_anomaly"))
 
     return anomalies

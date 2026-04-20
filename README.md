@@ -10,7 +10,7 @@ The pipeline reads hourly turbine readings from CSV files and performs the
 following steps in sequence:
 
 1. **Ingest** - reads raw CSV data with an explicit schema
-2. **Clean** - handles missing values, empty strings, and sensor error readings
+2. **Clean** - handles missing values, invalid sensor readings
 3. **Statistics** - computes daily min, max, and average power output per turbine
 4. **Anomaly detection** - flags readings outside 2 standard deviations from the daily mean per turbine
 5. **Write** - persists cleaned data, statistics, and anomalies to Parquet
@@ -129,12 +129,11 @@ OR
 power_output < avg_power - (2 × std_power)
 ```
 
-Anomalies are computed per turbine per day independently. A reading that is normal for one turbine may be an anomaly for another.
+Anomalies are computed per turbine per day independently. A reading that is normal for one turbine may be an anomaly for another. The anomalies output also has columns avg_power and std_power to contextualise the anomalies.
 
 ### Output Storage
 
-Parquet was chosen for output as it's a suitable format for analytical workloads like this (more rows needed than columns for a given query) and can be previewed with IDE extensions. For 
-production use on Databricks, Delta Lake would be ideal given the daily append pattern (see section on production considerations below).
+Parquet was chosen for output as it's a suitable format for analytical workloads like this (queries typically scan many rows but only need a few columns) and can be previewed with IDE extensions. For production use on Databricks, Delta Lake would be ideal given the daily append pattern (see section on production considerations below).
 
 ### Dev/Prod Configuration
 
@@ -164,7 +163,7 @@ For scalability, in Production a Databricks workspace can be used. It can serve 
 - **Missing data**: Missing sensor values are assumed to be occurring randomly rather than having a given bias, therefore the median is an appropriate measure for imputation.
 - **Sensor value thresholds**: I assume that power output is capped at 20 MW based on the observed data as defined in `clean.py`.
 - **24-hour window**: Daily windows are calendar days, midnight to midnight. Data is assumed to be in UTC.
-- **Wind direction validity**: Values outside the valid range of 0-360 degrees are set to NULL during cleaning, since standard statistical methods would be misleading in this case: e.g. a mean of 1 degree and 359 degrees is 180 degrees which is in the opposite direction to 1 and 359 degrees.
+- **Wind direction validity**: Values outside the valid range of 0-360 degrees are set to NULL during cleaning, since standard statistical methods would be misleading in this case: e.g. a mean of 1 degree and 359 degrees is 180 degrees which is in the opposite direction to 1 and 359 degrees. Wind direction is therefore excluded from imputation, statistics, and anomaly detection.
 - **CSV structure**: Each CSV always contains the same group of turbines. The pipeline reads all files in `data/` and processes them together.
 
 ## Test Data
