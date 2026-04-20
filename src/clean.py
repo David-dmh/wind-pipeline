@@ -16,9 +16,8 @@ def clean_data(df: DataFrame) -> DataFrame:
     """
 
     # 1 - Dedupe on primary key - must come first to avoid skewing median imputation
-    before = df.count()
     df = df.dropDuplicates(["turbine_id", "timestamp"])
-    logger.info("Dropped %d duplicate rows", before - df.count())
+    logger.info("Dropping duplicate rows based on turbine_id and timestamp")
 
     # 2 - NULL wind_direction values outside valid compass range 0-360
     df = df.withColumn(
@@ -32,13 +31,11 @@ def clean_data(df: DataFrame) -> DataFrame:
 
     # 3 - Drop rows where primary key fields are NULL
     # These rows cannot be attributed to a turbine or placed on the timeline
-    before = df.count()
     df = df.dropna(subset=["turbine_id", "timestamp"])
-    logger.info("Dropped %d rows with NULL turbine_id or timestamp", before - df.count())
+    logger.info("Dropping rows with NULL turbine_id or timestamp")
 
     # 4.1 - Impute missing power_output with per-turbine median
-    null_count = df.filter(F.col("power_output").isNull()).count()
-    logger.info("Imputing %d NULL power_output values with per-turbine median", null_count)
+    logger.info("Imputing NULL power_output values with per-turbine median")
 
     # Median is preferred over mean as it is robust to the extreme sensor error values 
     # such as negative readings that are removed later
@@ -68,8 +65,7 @@ def clean_data(df: DataFrame) -> DataFrame:
     ).drop("median_power")
 
     # 4.2 - Impute missing wind_speed with per-turbine median
-    null_count = df.filter(F.col("wind_speed").isNull()).count()
-    logger.info("Imputing %d NULL wind_speed values with per-turbine median", null_count)
+    logger.info("Imputing NULL wind_speed values with per-turbine median")
 
     wind_median_df = df.groupBy("turbine_id").agg(
             F.percentile_approx(
@@ -94,12 +90,11 @@ def clean_data(df: DataFrame) -> DataFrame:
     ).drop("median_wind_speed")
 
     # 5 - Remove sensor error values (not statistical anomalies)
-    before = df.count()
     df = df.filter(
         (F.col("power_output") >= 0)
         & (F.col("power_output") <= 20)
         & (F.col("wind_speed") >= 0)
     )
-    logger.info("Dropped %d rows with sensor error values", before - df.count())
+    logger.info("Dropping rows with sensor error values")
 
     return df
