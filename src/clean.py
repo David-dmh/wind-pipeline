@@ -42,10 +42,8 @@ def clean_data(df: DataFrame) -> DataFrame:
     # Note: if all values for a turbine are NULL, median will be NULL
     # These rows will not be imputed and will later be filtered out
     median_df = df.groupBy("turbine_id").agg(
-        F.percentile_approx(
-            "power_output"
-            ,0.5
-        ).alias("median_power")
+        F.percentile_approx("power_output", 0.5).alias("median_power")
+        ,F.percentile_approx("wind_speed", 0.5).alias("median_wind_speed")
     )
 
     # Add median_power column for use in imputation
@@ -66,19 +64,6 @@ def clean_data(df: DataFrame) -> DataFrame:
 
     # 4.2 - Impute missing wind_speed with per-turbine median
     logger.info("Imputing NULL wind_speed values with per-turbine median")
-
-    wind_median_df = df.groupBy("turbine_id").agg(
-            F.percentile_approx(
-                "wind_speed"
-                ,0.5
-            ).alias("median_wind_speed")
-        )
-
-    df = df.join(
-        wind_median_df
-        ,on="turbine_id"
-        ,how="left"
-    )
     
     df = df.withColumn(
         "wind_speed"

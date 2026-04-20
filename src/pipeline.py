@@ -33,7 +33,7 @@ def run_pipeline(spark: SparkSession) -> None:
 
     # Anomalies
     anomalies = detect_anomalies(df_clean)
-    logger.info("Anomalies found: %d", anomalies.count())
+    logger.info("Anomalies analysed")
 
     # Write out
     write_outputs(df_clean, stats, anomalies)
