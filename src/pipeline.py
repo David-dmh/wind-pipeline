@@ -1,0 +1,34 @@
+import logging
+from pyspark.sql import SparkSession
+
+from src.ingest import ingest_data
+from src.clean import clean_data
+from src.stats import compute_stats
+from src.anomalies import detect_anomalies
+from src.write import write_outputs
+
+logger = logging.getLogger(__name__)
+
+
+def run_pipeline(spark: SparkSession) -> None:
+    logger.info("Starting pipeline...")
+
+    # Ingestion
+    df = ingest_data(spark)
+    logger.info("Ingested %d rows", df.count())
+
+    # Clean
+    df_clean = clean_data(df)
+    logger.info("After cleaning: %d rows", df_clean.count())
+
+    # Stats
+    stats = compute_stats(df_clean)
+    logger.info("Statistics computed")
+
+    # Anomalies
+    anomalies = detect_anomalies(df_clean)
+    logger.info("Anomalies found: %d", anomalies.count())
+
+    # Write out
+    write_outputs(df_clean, stats, anomalies)
+    logger.info("Pipeline complete")
