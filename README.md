@@ -1,6 +1,6 @@
 # Wind Turbine Data Pipeline
 
-The PySpark data pipeline system processes power output data which it cleans and analyzes using data from 15 wind turbines which operate across three data groups.
+This PySpark data pipeline system processes power output data which it cleans and analyses using data from 15 wind turbines which operate across three data groups.
 
 ---
 
