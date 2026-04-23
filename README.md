@@ -165,6 +165,7 @@ For scalability, in Production a Databricks workspace can be used. It can serve 
 - **24-hour window**: Daily windows are calendar days, midnight to midnight. Data is assumed to be in UTC.
 - **Wind direction validity**: Values outside the valid range of 0-360 degrees are set to NULL during cleaning, since standard statistical methods would be misleading in this case: e.g. a mean of 1 degree and 359 degrees is 180 degrees which is in the opposite direction to 1 and 359 degrees. Wind direction is therefore excluded from imputation, statistics, and anomaly detection.
 - **CSV structure**: Each CSV always contains the same group of turbines. The pipeline reads all files in `data/` and processes them together.
+- **Output data format**: The task specified using an appropriate output database. I chose to use Parquet for file-based, queryable storage. As mentioned previously I would use Delta Tables in production, so I used Parquet as it is similar to Delta. 
 
 ## Test Data Edits
 
