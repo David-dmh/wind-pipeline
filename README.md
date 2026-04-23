@@ -106,7 +106,7 @@ The following steps are applied in order:
 |------|--------|
 | Deduplication | Remove duplicates based on primary key |
 | Invalid wind direction | If a wind direction is outside of the 0-360 degree range it will be replaced with NULL |
-| Primary key null drop | Rows with null values in both `turbine_id` and `timestamp` fields are removed from the table because those fields cannot be restored |
+| Primary key null drop | Rows with null values in both `turbine_id` and `timestamp` fields are removed from the table because those fields are important identifiers which are required |
 | Null imputation | The system uses per-turbine median values to fill in missing power output and wind speed data |
 | Sensor error value removal | The system removes erroneous readings which show values outside the range of 0 to 20 MW or which display negative wind speed |
 
